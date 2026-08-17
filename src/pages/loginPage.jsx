@@ -54,14 +54,6 @@ export default function LoginPage(){
     const navigate = useNavigate()
 
     function handleLogin(){
-
-        // axios.post("http://localhost:3000/users/login" , 
-        //     {
-        //         email : email,
-        //         password : password
-        //     }
-        // )
-
         api.post("/users/login" , 
             {
                 email : email,
@@ -72,18 +64,13 @@ export default function LoginPage(){
 
                 toast.success("Login successful")               
 
-                //browser store
                 localStorage.setItem("token" , res.data.token)
 
                 userData.setUser(res.data.user)
                 
                 if(res.data.isAdmin){
-                    //admin dashboard
-                    //window.location.href = "/admin"
                     navigate("/admin" , { replace : true })
                 }else{
-                    //homepage
-                    //window.location.href = "/"
                     navigate("/")
                 }
 
@@ -116,7 +103,6 @@ export default function LoginPage(){
                 onChange={
                     (e)=>{
                         
-                        // toast.success(e.target.value)
                         setEmail(e.target.value)
 
                     }
@@ -143,7 +129,7 @@ export default function LoginPage(){
                 <button onClick={handleLogin} className="w-full h-12 bg-accent rounded-lg text-white font-bold mt-5 ">Login</button>
                 <p className="w-full  text-right">Do not have an account? register <Link to="/register" className="text-accent font-bold">here</Link></p>
 
-                <button  className="w-full h-12 bg-secondary/20 rounded-lg text-secondary font-bold mt-5 border-2 border-secondary hover:bg-secondary hover:text-white transition-colors flex items-center justify-center gap-2"
+                <button  className="w-full h-12 bg-secondary/40 rounded-lg text-black font-bold mt-5 border-2 border-secondary hover:bg-secondary hover:text-white transition-colors flex items-center justify-center gap-2"
                 onClick={googleLogin}><FcGoogle /> Login with Google</button>
             </div>
 
