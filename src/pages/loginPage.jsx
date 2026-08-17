@@ -126,10 +126,10 @@ export default function LoginPage(){
                 type="password" className="w-full h-12 rounded-lg bg-secondary/20 border-2 border-accent focus:border-accent outline-none px-2 text-secondary" placeholder="••••••••"/>
                 <p className="w-full  text-right">Forget Password? reset <Link to="/reset-password" className="text-accent font-bold">here</Link></p>
                 
-                <button onClick={handleLogin} className="w-full h-12 bg-accent rounded-lg text-white font-bold mt-5 ">Login</button>
+                <button onClick={handleLogin} className="w-full h-12 bg-accent/85 rounded-lg text-white font-bold mt-5 hover:bg-accent transition-colors hover:cursor-pointer">Login</button>
                 <p className="w-full  text-right">Do not have an account? register <Link to="/register" className="text-accent font-bold">here</Link></p>
 
-                <button  className="w-full h-12 bg-secondary/40 rounded-lg text-black font-bold mt-5 border-2 border-secondary hover:bg-secondary hover:text-white transition-colors flex items-center justify-center gap-2"
+                <button  className="w-full h-12 bg-secondary/40 rounded-lg text-black font-bold mt-5 border-2 border-secondary hover:bg-secondary hover:text-white transition-colors hover:cursor-pointer flex items-center justify-center gap-2"
                 onClick={googleLogin}><FcGoogle /> Login with Google</button>
             </div>
 

@@ -50,11 +50,12 @@ export default function ResetPasswordPage(){
     }
 
     return(
-        <div className="w-full h-full flex justify-center items-center bg-primary">
+        
+        <div className="w-full h-full bg-[url('/bg.jpg')] bg-cover bg-center flex justify-center items-center">
 
             {
                 isOtpSent ?            
-            <div className="w-[400px] py-6 bg-white rounded-lg flex flex-col justify-center items-center gap-4">
+            <div className="w-[400px] h-[350px] backdrop-blur-xl shadow-xl rounded-lg p-6 flex flex-col justify-center items-center">
                 <h1 className="text-2xl font-bold">Reset Password</h1>
                 <h2 className="text-sm text-gray-500">{email}</h2>
                 <div className="w-[80%] flex flex-col gap-2">
@@ -73,19 +74,19 @@ export default function ResetPasswordPage(){
                 <Link to="/login" className="text-sm text-accent">Back to Login</Link>
 
             </div>:
-            <div className="w-[400px] h-[400px] bg-white rounded-lg flex flex-col justify-center items-center gap-4">
+            <div className="w-[400px] h-[350px] backdrop-blur-xl shadow-xl rounded-lg p-6 flex flex-col justify-center items-center">
                 <h1 className="text-2xl font-bold">Reset Password</h1>
                 <div className="w-[80%] flex flex-col gap-2">
                     <label htmlFor="email">Email</label>
-                    <input type="email" name="email" id="email" placeholder="Enter your email" className="w-full h-10 border border-gray-300 rounded-md px-2" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input type="email" name="email" id="email" placeholder="Enter your email" className="w-full h-10 border border-accent/60 rounded-md px-2" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
-                <button className="w-[80%] h-10 bg-accent text-white rounded-md" onClick={handleOTPRequest}>Reset Password</button>
+                <button className="w-[80%] h-10 bg-accent text-white rounded-md mt-3" onClick={handleOTPRequest}>Reset Password</button>
                 <Link to="/login" className="text-sm text-accent">Back to Login</Link>
             </div>
             }
             {
                 isLoading && <LoadingAnimation />
             }
-        </div>
+        </div> 
     )
 }
