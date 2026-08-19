@@ -227,7 +227,7 @@ export default function AdminOrdersPage() {
 
       <div className="h-32 w-full pointer-events-none" />
 
-      <div className="fixed bottom-6 right-6 -translate-x-1/2 z-30 w-[92%] max-w-xl">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 w-[92%] max-w-xl">
         <div className="bg-slate-900/90 border border-white/10 rounded-2xl backdrop-blur-2xl p-2.5 sm:p-3 shadow-2xl flex items-center justify-between gap-2 text-xs sm:text-sm">
 
           <button

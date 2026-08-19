@@ -6,7 +6,7 @@ import { CiBoxList, CiHome, CiPhone, CiShoppingCart } from "react-icons/ci";
 export default function Header() {
   return (
     <>
-      <header className="sticky top-0 z-40 w-full h-[88px] bg-accent/95 backdrop-blur-md border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,128,0.2)] flex px-6 lg:px-12 items-center justify-between transition-all">
+      <header className="sticky top-0 z-40 w-full h-[88px] bg-accent/95 backdrop-blur-md border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,128,0.2)] flex px-6 lg:px-12 items-center justify-center lg:justify-between transition-all">
         
         <Link to="/" className="h-12 flex items-center group transition-transform duration-300 hover:scale-105">
           <img
@@ -68,10 +68,10 @@ export default function Header() {
 
         <Link
           className="flex-1 h-full flex flex-col items-center justify-center gap-1 rounded-xl text-accent hover:bg-accent/5 transition-all"
-          to="/cart"
+          to="/about"
         >
           <CiPhone className="text-2xl stroke-[0.5]" />
-          <span className="text-[11px] font-semibold tracking-wider">Contact</span>
+          <span className="text-[11px] font-semibold tracking-wider">About</span>
         </Link>
 
         <Link

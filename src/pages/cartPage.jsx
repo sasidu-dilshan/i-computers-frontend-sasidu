@@ -1,11 +1,21 @@
-import { useState } from "react";
-import { addToCart, getCart, getCartTotal } from "../lib/cart";
+import { useEffect, useState } from "react";
+import { addToCart, getCart, getCartTotal, fetchCartFromBackend } from "../lib/cart";
 import getFormattedPrice from "../lib/price-format";
 import { Link } from "react-router-dom";
-import { FiShoppingBag, FiTrash2, FiMinus, FiPlus, FiArrowRight } from "react-icons/fi";
+import { FiShoppingBag, FiTrash2, FiMinus, FiPlus, FiArrowRight, FiLoader } from "react-icons/fi";
 
 export default function CartPage() {
   const [cart, setCart] = useState(getCart());
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCartFromBackend().then((updatedCart) => {
+      if (updatedCart) {
+        setCart(updatedCart);
+      }
+      setLoading(false);
+    });
+  }, []);
 
   const handleQuantityChange = (product, delta) => {
     addToCart(product, delta);
@@ -16,7 +26,7 @@ export default function CartPage() {
   const isCartEmpty = cart.length === 0;
 
   return (
-    <div className="w-full min-h-[calc(100vh-80px)] bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 flex flex-col items-center pb-32">
+    <div className="w-full min-h-[calc(100vh-80px)] bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 flex flex-col items-center pb-32 relative overflow-hidden">
       <div 
         className="pointer-events-none absolute inset-0 opacity-[0.03] z-0"
         style={{
@@ -25,7 +35,7 @@ export default function CartPage() {
         }}
       />
 
-      <div className="w-full max-w-2xl mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+      <div className="w-full max-w-2xl mb-6 flex items-center justify-between border-b border-white/10 pb-4 z-10">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-accent border border-accent/20 text-white">
             <FiShoppingBag className="text-xl" />
@@ -40,8 +50,14 @@ export default function CartPage() {
         </span>
       </div>
 
-      {isCartEmpty ? (
-        <div className="w-full max-w-2xl bg-slate-900/50 border border-white/10 rounded-3xl p-10 text-center backdrop-blur-xl flex flex-col items-center justify-center space-y-4 my-8">
+      {loading ? (
+        <div className="w-full max-w-2xl bg-slate-900/50 border border-white/10 rounded-3xl p-10 text-center backdrop-blur-xl flex flex-col items-center justify-center space-y-3 my-8 z-10">
+          <FiLoader className="text-3xl text-accent animate-spin" />
+          <p className="text-xs text-slate-400">Syncing your cart...</p>
+        </div>
+      ) : isCartEmpty ? (
+
+        <div className="w-full max-w-2xl bg-slate-900/50 border border-white/10 rounded-3xl p-10 text-center backdrop-blur-xl flex flex-col items-center justify-center space-y-4 my-8 z-10">
           <div className="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/20 text-accent flex items-center justify-center">
             <FiShoppingBag className="text-3xl" />
           </div>
@@ -59,7 +75,7 @@ export default function CartPage() {
         </div>
       ) : (
 
-        <div className="w-full max-w-2xl space-y-4">
+        <div className="w-full max-w-2xl space-y-4 z-10">
           {cart.map((item, index) => {
             const hasDiscount = item.product.labelledPrice > item.product.price;
             const itemSubtotal = item.product.price * item.qty;
@@ -75,11 +91,6 @@ export default function CartPage() {
                     alt={item.product.name}
                     className="w-full h-full object-cover"
                   />
-                  {/* {hasDiscount && (
-                    <span className="absolute top-1.5 left-1.5 bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
-                      Sale
-                    </span>
-                  )} */}
                 </div>
 
                 <div className="flex-1 w-full flex flex-col justify-between space-y-3 sm:space-y-2">
@@ -144,9 +155,9 @@ export default function CartPage() {
         </div>
       )}
 
-    <div className="w-full h-24 sm:h-28 flex-shrink-0" />
+      <div className="w-full h-24 sm:h-28 flex-shrink-0" />
 
-      {!isCartEmpty && (
+      {!isCartEmpty && !loading && (
         <div className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl bg-slate-900/90 border border-white/15 rounded-2xl p-3.5 sm:p-4 backdrop-blur-2xl shadow-2xl flex items-center justify-between gap-4 z-50">
           <div>
             <span className="block text-[10px] text-slate-400 uppercase tracking-wider font-mono">
@@ -167,7 +178,6 @@ export default function CartPage() {
           </Link>
         </div>
       )}
-
     </div>
   );
 }

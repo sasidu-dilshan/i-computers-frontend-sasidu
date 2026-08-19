@@ -87,7 +87,7 @@ export default function UserData() {
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute bottom-full mb-3 -right-2 lg:right-0 lg:bottom-auto lg:top-full lg:mt-2 w-56 max-w-[calc(100vw-2rem)] bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
               <div className="px-4 py-2.5 border-b border-white/10 lg:hidden">
                 <p className="text-sm font-semibold text-white">
                   {user.firstName} {user.lastName}

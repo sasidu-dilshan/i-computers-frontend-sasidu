@@ -167,7 +167,7 @@ export default function ProductOverview() {
 
                 <div className="flex flex-col sm:flex-row gap-3.5 pt-6 border-t border-slate-800/80">
                   <button
-                    className="flex-1 h-13 sm:h-14 bg-slate-950/80 border border-cyan-500/50 hover:border-cyan-400 text-cyan-400 font-semibold text-sm sm:text-base rounded-xl hover:bg-cyan-500/10 transition-all duration-300 cursor-pointer flex justify-center items-center gap-2 active:scale-95 shadow-md shadow-cyan-500/5"
+                    className="flex-1 h-13 lg:h-14 bg-slate-950/80 border border-cyan-500/50 hover:border-cyan-400 text-cyan-400 font-semibold text-sm sm:text-base rounded-xl hover:bg-cyan-500/10 transition-all duration-300 cursor-pointer flex justify-center items-center gap-2 active:scale-95 shadow-md shadow-cyan-500/5"
                     onClick={() => {
                       addToCart(product, 1);
                       toast.success("Product added to cart");
@@ -194,7 +194,7 @@ export default function ProductOverview() {
                         ],
                       });
                     }}
-                    className="flex-1 h-13 sm:h-14 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-sm sm:text-base rounded-xl transition-all duration-300 cursor-pointer flex justify-center items-center gap-2 shadow-lg shadow-cyan-500/25 active:scale-95"
+                    className="flex-1 h-13 lg:h-14 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-sm sm:text-base rounded-xl transition-all duration-300 cursor-pointer flex justify-center items-center gap-2 shadow-lg shadow-cyan-500/25 active:scale-95"
                   >
                     <FaBolt className="w-4 h-4" />
                     Buy Now

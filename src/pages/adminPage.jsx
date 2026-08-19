@@ -51,7 +51,7 @@ export default function AdminPage() {
 
       <div className="md:hidden relative z-20 flex items-center justify-between p-4 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80">
         <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="logo" className="h-8 object-contain" />
+          <img src="/logo-white.png" alt="logo" className="h-8 object-contain" />
           <span className="text-lg font-bold tracking-wide text-slate-100 flex items-center gap-1.5">
             Admin <FiShield className="text-cyan-400 text-sm" />
           </span>

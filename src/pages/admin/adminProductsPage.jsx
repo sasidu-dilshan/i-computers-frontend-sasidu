@@ -206,7 +206,7 @@ export default function AdminProductsPage() {
 
 	<div className="h-25 w-full pointer-events-none" />
 
-      <div className="fixed bottom-6 right-6 -translate-x-1/2 z-30 w-[92%] max-w-xl">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 w-[92%] max-w-xl">
         <div className="bg-slate-900/90 border border-white/10 rounded-2xl backdrop-blur-2xl p-2.5 sm:p-3 shadow-2xl flex items-center justify-between gap-2 text-xs sm:text-sm">
 
           <button
@@ -278,7 +278,7 @@ export default function AdminProductsPage() {
 
       <Link
         to="/admin/add-product"
-        className="fixed right-6 bottom-6 z-40 w-14 h-14 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-full text-xl flex justify-center items-center shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] transition-all duration-300 active:scale-95 border border-cyan-400/30 group"
+        className="fixed right-6 bottom-25 lg:bottom-6 z-40 w-14 h-14 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-full text-xl flex justify-center items-center shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] transition-all duration-300 active:scale-95 border border-cyan-400/30 group"
         title="Add New Product"
       >
         <FaPlus className="transition-transform group-hover:rotate-90 duration-300" />

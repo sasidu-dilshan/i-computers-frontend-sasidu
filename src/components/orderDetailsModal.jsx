@@ -20,7 +20,7 @@ export default function OrderDetailsModal(props) {
       case "cancelled":
         return "bg-rose-500/10 text-rose-400 border-rose-500/30";
       default:
-        return "bg-accent/10 text-accent border-accent/30";
+        return "bg-accent text-white border-accent/30";
     }
   };
 
@@ -89,8 +89,7 @@ export default function OrderDetailsModal(props) {
           </div>
 
           <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 no-scrollbar">
-            
-            {/* Quick Stats Grid */}
+
             <div className="grid grid-cols-3 gap-2 p-3 bg-slate-900/50 rounded-2xl border border-white/5 text-center">
               <div>
                 <span className="block text-[10px] text-white/40 uppercase tracking-wider font-mono">
