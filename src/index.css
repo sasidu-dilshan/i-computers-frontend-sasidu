@@ -16,26 +16,61 @@
 	display: block;
 }
 
-/* .fancy-scrollbar::-webkit-scrollbar {
-  width: 8px;
-} */
+/* =========================================================
+   Modern Tech Vibe Custom Scrollbar
+   ========================================================= */
 
-/* Chrome, Edge, Safari */
+/* --- Webkit Browsers (Chrome, Edge, Safari) --- */
+
+/* Scrollbar width for desktop & mobile touch devices */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px; /* Horizontal scrollbar එකට */
 }
 
+/* Scrollbar Track (Background) */
 ::-webkit-scrollbar-track {
-  background: white;
+  background: #020617; /* Slate-950 dark background */
 }
 
+/* Scrollbar Thumb (Draggable handle) */
 ::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15); /* Sleek semi-transparent dark white */
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.05); /* Subtle border for tech glow */
+  transition: all 0.2s ease-in-out;
 }
 
-/* Firefox */
+/* Scrollbar Thumb on Hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.6); /* Vibrant Tech Accent Blue/Cyan on hover */
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); /* Ambient Neon Glow */
+}
+
+/* Scrollbar Thumb Active (Clicked/Dragging) */
+::-webkit-scrollbar-thumb:active {
+  background: rgba(59, 130, 246, 0.9);
+}
+
+/* --- Firefox Support --- */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #000080 transparent;
+  /* scrollbar-color: [Thumb Color] [Track Color] */
+  scrollbar-color: rgba(255, 255, 255, 0.2) #020617;
+}
+
+
+/* =========================================================
+   Mobile Optimization
+   ========================================================= */
+
+@media (max-width: 640px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
 }

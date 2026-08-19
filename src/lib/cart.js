@@ -112,3 +112,7 @@ export function getCartTotal(cart){
 
     return total
 }
+
+export const clearCart = () => {
+  localStorage.removeItem("cart");
+};

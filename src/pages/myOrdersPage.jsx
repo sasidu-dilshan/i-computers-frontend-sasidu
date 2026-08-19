@@ -1,144 +1,307 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import api from "../lib/api";
 import LoadingAnimation from "../components/loadingAnimation";
 import formatTimestamp from "../lib/date-format";
 import getFormattedPrice from "../lib/price-format";
 import OrderDetailsModal from "../components/orderDetailsModal";
-
+import { 
+  FiRefreshCw, 
+  FiPackage, 
+  FiChevronLeft, 
+  FiChevronRight, 
+  FiShoppingBag, 
+  FiCalendar, 
+  FiMapPin, 
+  FiUser,
+  FiChevronDown,
+  FiCheck
+} from "react-icons/fi";
 
 export default function MyOrdersPage() {
-    const [orders, setOrders] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [pageSize, setPageSize] = useState(3);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalOrders, setTotalOrders] = useState(0);
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        api.get("/orders/"+pageSize+"/"+currentPage, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }).then((response) => {
-            if (isLoading) {
-                console.log(response.data);
-                setOrders(response.data.orders);
-                setTotalPages(response.data.totalPages);
-                setTotalOrders(response.data.totalCount);
-                setIsLoading(false);
-            }
-        });
-    }, [isLoading]);
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pageSize, setPageSize] = useState(3);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
 
-    return (
-        <div className="w-full max-h-full  flex flex-col p-4 items-start gap-0 overflow-y-scroll">
-            
+  // Modern Dropdown State & Ref
+  const [isPageSizeOpen, setIsPageSizeOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-            <div className="w-full min-h-[100px] bg-white shadow-md rounded-md flex items-center p-4 justify-between mb-8">
-                {isLoading && <LoadingAnimation />}
-                <h1 className="text-2xl font-semibold text-secondary">My Orders</h1>
+  // Outside click handle කිරීම (Dropdown එකෙන් පිටත Click කළ විට Close වීමට)
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsPageSizeOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-                <div className="flex gap-4 justify-center items-center">
-                    <span>{totalOrders} Orders</span>
-                    <button
-                        onClick={() => {
-                            setIsLoading(true);
-                        }}
-                        className="bg-accent text-white px-4 py-2 rounded-md"
-                    >
-                        Refresh
-                    </button>
-                </div>
-            </div>
-            <table className="w-full bg-white shadow-md rounded-md overflow-hidden text-center mb-[100px]">
-                <thead className="bg-accent text-white h-[60px]">
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Date</th>
-                        <th>Email</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>City</th>
-                        <th>Phone</th>
-                        <th>Status</th>
-                        <th>Item count</th>
-                        <th>Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
+  useEffect(() => {
+    if (!isLoading) return;
 
-                <tbody>
-                    {orders.map((item) => {
-                        return (
-                            <tr key={item.orderId} className="odd:bg-gray-200 h-[50px]">
-                                
-                                <td>{item.orderId}</td>
-                                <td>{formatTimestamp(item.date)}</td>
-                                <td>{item.email}</td>
-                                <td>{item.firstName}</td>
-                                <td>{item.lastName}</td>
-                                <td>{item.city}</td>
-                                <td>{item.phone}</td>
-                                <td>{item.status}</td>
-                                <td>{item.items.length}</td>
-                                <td>{getFormattedPrice(item.totalAmount)}</td>
-                                <td>
-                                    <div className="flex justify-center items-center gap-2">
-                                        <OrderDetailsModal order={item}/>
-                                    </div>
-                                    
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-            <div className="w-[calc(100%-360px)] h-[100px]  fixed bottom-10 flex justify-center items-center">
-               <div className="w-[500px] h-[50px] bg-white shadow-2xl rounded-md flex justify-between overflow-hidden">
-                    <button className="h-full px-4 hover:bg-accent hover:text-white text-accent transition-colors duration-300 cursor-pointer"
-                        disabled={currentPage == 1}
-                        onClick={
-                            ()=>{
+    const token = localStorage.getItem("token");
+    api.get(`/orders/${pageSize}/${currentPage}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((response) => {
+      console.log(response.data);
+      setOrders(response.data.orders || []);
+      setTotalPages(response.data.totalPages || 1);
+      setTotalOrders(response.data.totalCount || 0);
+      setIsLoading(false);
+    }).catch((err) => {
+      console.error(err);
+      setIsLoading(false);
+    });
+  }, [isLoading, pageSize, currentPage]);
 
-                                const newPageNumber = currentPage - 1
-                                setCurrentPage(newPageNumber)
-                                setIsLoading(true)
-                            }
-                        }>
-                        &lt;&lt; Previous
-                    </button>
-                    <div className="h-full text-accent flex justify-center items-center gap-1">
-                        <label htmlFor="pageSize">Page Size:</label>
-                        <select className="h-full hover:bg-accent hover:text-white text-accent transition-colors duration-300 cursor-pointer"
-                            value={pageSize}
-                            onChange={(e) => {
-                                setPageSize(e.target.value);
-                                setIsLoading(true);
-                            }
-                        }>
-                            <option value={3}>3</option>
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                        </select>
-                    </div>
+  const getStatusBadge = (status) => {
+    const lower = status?.toLowerCase() || "";
+    if (lower.includes("deliver") || lower.includes("complet")) {
+      return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+    } else if (lower.includes("pend") || lower.includes("process")) {
+      return "bg-amber-500/10 text-amber-400 border-amber-500/20";
+    } else if (lower.includes("cancel") || lower.includes("reject")) {
+      return "bg-rose-500/10 text-rose-400 border-rose-500/20";
+    }
+    return "bg-sky-500/10 text-sky-400 border-sky-500/20";
+  };
 
-                    <div className="h-full px-4 hover:bg-accent hover:text-white text-accent transition-colors duration-300 cursor-pointer flex justify-center items-center gap-2">
-                        <span>Page {currentPage} of {totalPages}</span>
-                    </div>
-                    
-                    <button
-                        disabled={currentPage == totalPages}
-                        onClick={()=>{
-                            const newPageNumber = currentPage + 1
-                            setCurrentPage(newPageNumber)
-                            setIsLoading(true)
-                        }}
-                    className="h-full px-4 hover:bg-accent hover:text-white text-accent transition-colors duration-300 cursor-pointer" >
-                      Next &gt;&gt;
-                    </button>
-               </div>
-            </div>
-            
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setCurrentPage(1);
+    setIsPageSizeOpen(false);
+    setIsLoading(true);
+  };
+
+  return (
+    <div className="w-full min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 md:p-8 flex flex-col gap-6 relative font-sans">
+      
+      {/* Header Section */}
+      <div className="w-full bg-slate-900/80 border border-white/10 rounded-2xl backdrop-blur-xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl shadow-black/40">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-accent border border-accent/30 rounded-xl text-white">
+            <FiShoppingBag className="text-2xl" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+              My Orders
+              {isLoading && <LoadingAnimation />}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+              Track and manage your order history
+            </p>
+          </div>
         </div>
-    );
+
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          <span className="px-3 py-1.5 rounded-lg bg-slate-800/80 border border-white/5 text-xs sm:text-sm font-mono text-slate-300">
+            Total: <span className="text-white font-bold">{totalOrders}</span>
+          </span>
+
+          <button
+            onClick={() => setIsLoading(true)}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent hover:bg-accent/80 text-white font-medium text-xs sm:text-sm transition-all duration-300 shadow-lg shadow-accent/20 active:scale-95 disabled:opacity-50 cursor-pointer"
+          >
+            <FiRefreshCw className={`text-base ${isLoading ? "animate-spin" : ""}`} />
+            <span>Refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="w-full pb-28">
+
+        <div className="hidden lg:block w-full overflow-hidden bg-slate-900/60 border border-white/10 rounded-2xl backdrop-blur-xl shadow-xl">
+          <table className="w-full text-left text-sm text-slate-300">
+            <thead className="bg-slate-800/90 border-b border-white/10 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <tr>
+                <th className="py-4 px-4 text-center">Order ID</th>
+                <th className="py-4 px-4">Date</th>
+                <th className="py-4 px-4">Customer</th>
+                <th className="py-4 px-4">Location</th>
+                <th className="py-4 px-4 text-center">Items</th>
+                <th className="py-4 px-4 text-center">Status</th>
+                <th className="py-4 px-4 text-right">Total</th>
+                <th className="py-4 px-4 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {orders.map((item) => (
+                <tr key={item.orderId} className="hover:bg-white/[0.02] transition-colors duration-200">
+                  <td className="py-4 px-4 text-center font-mono font-medium text-white">
+                    #{item.orderId}
+                  </td>
+                  <td className="py-4 px-4 text-slate-400 whitespace-nowrap">
+                    {formatTimestamp(item.date)}
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="font-medium text-white">{item.firstName} {item.lastName}</div>
+                    <div className="text-xs text-slate-500 font-mono">{item.email}</div>
+                  </td>
+                  <td className="py-4 px-4 whitespace-nowrap">
+                    <div className="text-slate-300">{item.city}</div>
+                    <div className="text-xs text-slate-500">{item.phone}</div>
+                  </td>
+                  <td className="py-4 px-4 text-center font-semibold text-white">
+                    {item.items?.length || 0}
+                  </td>
+                  <td className="py-4 px-4 text-center whitespace-nowrap">
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(item.status)}`}>
+                      {item.status}
+                    </span>
+                  </td>
+                  <td className="py-4 px-4 text-right font-bold text-white whitespace-nowrap">
+                    {getFormattedPrice(item.totalAmount)}
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <OrderDetailsModal order={item} />
+                  </td>
+                </tr>
+              ))}
+
+              {orders.length === 0 && !isLoading && (
+                <tr>
+                  <td colSpan={8} className="py-12 text-center text-slate-500">
+                    No orders found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-4">
+          {orders.map((item) => (
+            <div 
+              key={item.orderId} 
+              className="bg-slate-900/80 border border-white/10 rounded-2xl p-5 backdrop-blur-xl shadow-lg flex flex-col justify-between gap-4"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-white/5">
+                <div>
+                  <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">Order ID</span>
+                  <span className="font-mono font-bold text-accent text-base">#{item.orderId}</span>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(item.status)}`}>
+                  {item.status}
+                </span>
+              </div>
+
+              <div className="space-y-2.5 text-xs sm:text-sm text-slate-300">
+                <div className="flex justify-between items-center text-slate-400">
+                  <span className="flex items-center gap-1.5"><FiCalendar className="text-accent" /> Date</span>
+                  <span className="font-medium text-slate-200">{formatTimestamp(item.date)}</span>
+                </div>
+                <div className="flex justify-between items-center text-slate-400">
+                  <span className="flex items-center gap-1.5"><FiUser className="text-accent" /> Customer</span>
+                  <span className="font-medium text-slate-200">{item.firstName} {item.lastName}</span>
+                </div>
+                <div className="flex justify-between items-center text-slate-400">
+                  <span className="flex items-center gap-1.5"><FiMapPin className="text-accent" /> City / Phone</span>
+                  <span className="font-medium text-slate-200">{item.city} ({item.phone})</span>
+                </div>
+                <div className="flex justify-between items-center text-slate-400">
+                  <span className="flex items-center gap-1.5"><FiPackage className="text-accent" /> Items</span>
+                  <span className="font-semibold text-white">{item.items?.length || 0} items</span>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-3">
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase font-mono block">Total Amount</span>
+                  <span className="text-base font-bold text-white">{getFormattedPrice(item.totalAmount)}</span>
+                </div>
+                <OrderDetailsModal order={item} />
+              </div>
+            </div>
+          ))}
+
+          {orders.length === 0 && !isLoading && (
+            <div className="col-span-full py-12 text-center text-slate-500 bg-slate-900/60 border border-white/10 rounded-2xl">
+              No orders found.
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 w-[92%] max-w-xl">
+        <div className="bg-slate-900/90 border border-white/10 rounded-2xl backdrop-blur-2xl p-2.5 sm:p-3 shadow-2xl flex items-center justify-between gap-2 text-xs sm:text-sm">
+          
+          <button
+            disabled={currentPage === 1}
+            onClick={() => {
+              setCurrentPage((prev) => prev - 1);
+              setIsLoading(true);
+            }}
+            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 disabled:opacity-30 disabled:hover:bg-white/5 transition-all cursor-pointer border border-white/5 disabled:cursor-not-allowed"
+          >
+            <FiChevronLeft className="text-base" />
+            <span className="hidden sm:inline">Prev</span>
+          </button>
+
+          <div className="flex items-center gap-2 sm:gap-4">
+
+            <div className="relative" ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={() => setIsPageSizeOpen(!isPageSizeOpen)}
+                className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 border border-white/10 hover:border-accent/40 rounded-xl px-3 py-1.5 text-slate-200 transition-all cursor-pointer text-xs font-medium"
+              >
+                <span className="text-slate-400 hidden sm:inline">Show:</span>
+                <span className="font-bold text-white">{pageSize}</span>
+                <FiChevronDown className={`text-slate-400 text-sm transition-transform duration-200 ${isPageSizeOpen ? "rotate-180 text-accent" : ""}`} />
+              </button>
+
+              {isPageSizeOpen && (
+                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-28 bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-2xl p-1.5 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150">
+                  <div className="text-[10px] uppercase font-mono text-slate-500 px-2.5 py-1">
+                    Rows per page
+                  </div>
+                  {[3, 5, 10].map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => handlePageSizeChange(size)}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${
+                        pageSize === size 
+                          ? "bg-accent text-white" 
+                          : "text-slate-300 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      <span>{size} Items</span>
+                      {pageSize === size && <FiCheck className="text-sm" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="h-4 w-[1px] bg-white/10" />
+
+            <span className="font-mono text-slate-300 text-xs sm:text-sm">
+              Page <span className="text-white font-bold">{currentPage}</span> of {totalPages}
+            </span>
+          </div>
+
+          <button
+            disabled={currentPage >= totalPages}
+            onClick={() => {
+              setCurrentPage((prev) => prev + 1);
+              setIsLoading(true);
+            }}
+            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 disabled:opacity-30 disabled:hover:bg-white/5 transition-all cursor-pointer border border-white/5 disabled:cursor-not-allowed"
+          >
+            <span className="hidden sm:inline">Next</span>
+            <FiChevronRight className="text-base" />
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  );
 }

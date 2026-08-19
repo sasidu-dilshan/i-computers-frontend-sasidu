@@ -1,82 +1,188 @@
-import { useState } from "react"
-import { getCartTotal } from "../lib/cart"
-import getFormattedPrice from "../lib/price-format"
-import {useLocation } from "react-router-dom"
-import OrderModal from "../components/orderModal"
+import { useState } from "react";
+import { getCartTotal } from "../lib/cart";
+import getFormattedPrice from "../lib/price-format";
+import { useLocation, Link } from "react-router-dom";
+import OrderModal from "../components/orderModal";
+import { FiCheckCircle, FiTrash2, FiMinus, FiPlus, FiArrowLeft } from "react-icons/fi";
 
-export default function CheckoutPage(){
+export default function CheckoutPage() {
+  const location = useLocation();
+  const [cart, setCart] = useState(location.state || []);
 
-    const location = useLocation()
-    const [cart , setCart] = useState(location.state)
+  const handleQuantity = (index, delta) => {
+    const newCart = [...cart];
+    if (delta === -1 && newCart[index].qty > 1) {
+      newCart[index].qty -= 1;
+      setCart(newCart);
+    } else if (delta === 1) {
+      newCart[index].qty += 1;
+      setCart(newCart);
+    }
+  };
 
-    return(
-        <div className="w-full h-[calc(100vh-100px)]  overflow-y-scroll flex flex-col items-center pb-[180px]">
-            {
-                cart.map(
-                    (item,index)=>{
-                        return(
-                            <div key={index} className="w-full lg:w-[550px] min-h-[130px] bg-white my-4 shadow-md rounded-md overflow-hidden flex flex-row">
-                                <img src={item.product.image} className="h-full w-[130px] object-cover"/>
-                                <div className="w-[420px] h-full p-1 flex flex-col">
-                                    <h1 className="font-semibold">{item.product.name}</h1>
-                                    {
-                                        item.product.labelledPrice > item.product.price &&
-                                        <span className="text-lg font-normal line-through text-gray-500">{getFormattedPrice(item.product.labelledPrice)}</span>
-                                    }
-                                    <span className="text-lg font-semibold text-accent">{getFormattedPrice(item.product.price)}</span>
-                                    <div className="w-full h-[40px]  flex justify-between items-center pr-2">
-                                        <div className="w-[120px] h-[40px] border border-accent rounded-md overflow-hidden flex flex-row">
-                                            <button
-                                            onClick={
-                                               
-                                                ()=>{
-                                                    if(item.qty>1){
+  const totalAmount = getCartTotal(cart);
+  const isCartEmpty = !cart || cart.length === 0;
 
-                                                        const newCart = [...cart]
-                                                        //{...cart} if it is a JSON
-                                                        newCart[index].qty -= 1
+  return (
+    <div className="relative w-full min-h-[calc(100vh-80px)] bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 flex flex-col items-center pb-32 overflow-hidden">
+    
+      <div 
+        className="pointer-events-none absolute inset-0 opacity-[0.03] z-0"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='56' height='100' viewBox='0 0 56 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66ZM28 100L0 84L0 50L28 66L56 50L56 84L28 100Z' fill='none' stroke='%23ffffff' stroke-width='1.2'/%3E%3C/svg%3E")`,
+          backgroundSize: "56px 100px"
+        }}
+      />
 
-                                                        setCart(newCart)
-                                                    }
+      <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[140px] z-0" />
 
-                                                }
-                                                    
-                                              
-                                            }
-                                            className="w-[40px] h-full hover:bg-accent hover:text-white cursor-pointer text-accent font-semibold hover:bg-accent-dark transition-colors duration-300">-</button>
-                                            <span className="w-[40px] h-full flex justify-center items-center">{item.qty}</span>
-                                            <button
-                                            onClick={
-                                                ()=>{
-                                                    
-                                                    const newCart = [...cart]
-                                                    //{...cart} if it is a JSON
-                                                    newCart[index].qty += 1
+      <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
 
-                                                    setCart(newCart)
-
-                                                }
-                                            }
-                                            className="w-[40px] h-full hover:bg-accent hover:text-white cursor-pointer text-accent font-semibold hover:bg-accent-dark transition-colors duration-300">+</button>
-                                        </div>
-                                        <p className="text-lg font-normal text-gray-600">{getFormattedPrice(item.product.price*item.qty)}</p>
-                                    </div>
-                                    
-                                </div>
-                                
-                            </div>
-                        )
-                    }
-                )
-            }
-                <div  className="w-full lg:w-[550px] min-h-[130px]  my-4  rounded-md overflow-hidden flex lg:hidden flex-row"></div>
-
-                <div className="w-full lg:w-[550px] min-h-[90px] fixed bottom-[80px] lg:bottom-2 bg-white shadow-accent my-4 shadow-sm rounded-md overflow-hidden flex flex-row items-center justify-between px-2">
-                    
-                    <OrderModal cart={cart}/>
-
-                    <span className="text-lg font-semibold text-secondary pr-1">{getFormattedPrice(getCartTotal(cart))}</span>
-                </div>
+        <div className="w-full mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="flex items-center gap-3">
+            <Link 
+              to="/cart" 
+              className="p-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300 hover:bg-accent hover:text-white hover:border-white/20 transition-all"
+            >
+              <FiArrowLeft className="text-lg" />
+            </Link>
+            <div>
+              <h1 className="text-xl font-bold tracking-wide text-white">Checkout Overview</h1>
+              <p className="text-xs text-slate-400">Review items & complete your order</p>
+            </div>
+          </div>
+          <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-900 border border-white/10 text-slate-300">
+            {cart.length} {cart.length === 1 ? 'Item' : 'Items'}
+          </span>
         </div>
-    )
+
+        {isCartEmpty ? (
+          <div className="w-full bg-slate-900/50 border border-white/10 rounded-3xl p-10 text-center backdrop-blur-xl flex flex-col items-center justify-center space-y-4 my-8">
+            <div className="w-16 h-16 rounded-2xl bg-accent/10 border border-accent/20 text-accent flex items-center justify-center">
+              <FiCheckCircle className="text-3xl" />
+            </div>
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold text-white">No items to checkout</h2>
+              <p className="text-xs text-slate-400">Your checkout session is empty.</p>
+            </div>
+            <Link
+              to="/products"
+              className="mt-2 px-5 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white text-xs font-semibold shadow-lg shadow-accent/20 transition-all active:scale-95"
+            >
+              Browse Products
+            </Link>
+          </div>
+        ) : (
+          <div className="w-full space-y-4 pb-20 sm:pb-24">
+            {cart.map((item, index) => {
+              const hasDiscount = item.product.labelledPrice > item.product.price;
+              const itemSubtotal = item.product.price * item.qty;
+
+              return (
+                <div
+                  key={index}
+                  className="w-full bg-slate-900/60 border border-white/10 rounded-2xl p-3 sm:p-4 backdrop-blur-xl flex flex-col sm:flex-row items-center gap-4 hover:border-white/20 transition-all duration-300 shadow-xl"
+                >
+
+                  <div className="w-full sm:w-28 h-28 rounded-xl overflow-hidden bg-slate-950 border border-white/5 flex-shrink-0 relative">
+                    <img
+                      src={item.product.image}
+                      alt={item.product.name}
+                      className="w-full h-full object-cover"
+                    />
+                    {/* {hasDiscount && (
+                      <span className="absolute top-1.5 left-1.5 bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
+                        Sale
+                      </span>
+                    )} */}
+                  </div>
+
+                  <div className="flex-1 w-full flex flex-col justify-between space-y-3 sm:space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h2 className="font-medium text-white text-sm sm:text-base line-clamp-1">
+                          {item.product.name}
+                        </h2>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-sm font-semibold text-white">
+                            {getFormattedPrice(item.product.price)}
+                          </span>
+                          {hasDiscount && (
+                            <span className="text-xs line-through text-slate-500">
+                              {getFormattedPrice(item.product.labelledPrice)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <span className="text-xs font-mono text-slate-400 sm:hidden">
+                        {getFormattedPrice(itemSubtotal)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                      <div className="flex items-center bg-slate-950/80 border border-white/10 rounded-xl overflow-hidden p-0.5">
+                        <button
+                          type="button"
+                          onClick={() => handleQuantity(index, -1)}
+                          disabled={item.qty <= 1}
+                          className={`w-8 h-8 flex items-center justify-center transition-colors rounded-lg ${
+                            item.qty <= 1 
+                              ? "text-slate-600 cursor-not-allowed" 
+                              : "text-slate-300 hover:text-white hover:bg-white/10 cursor-pointer"
+                          }`}
+                        >
+                          <FiMinus className="text-xs" />
+                        </button>
+                        
+                        <span className="w-9 text-center text-xs font-bold text-white font-mono">
+                          {item.qty}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() => handleQuantity(index, 1)}
+                          className="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                        >
+                          <FiPlus className="text-xs" />
+                        </button>
+                      </div>
+
+                      <div className="hidden sm:block text-right">
+                        <span className="block text-[10px] text-slate-400 uppercase tracking-wider font-mono">
+                          Subtotal
+                        </span>
+                        <span className="text-sm font-semibold text-white">
+                          {getFormattedPrice(itemSubtotal)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      </div>
+
+      {!isCartEmpty && (
+        <div className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl bg-slate-900/90 border border-white/15 rounded-2xl p-3.5 sm:p-4 backdrop-blur-2xl shadow-2xl flex items-center justify-between gap-4 z-50">
+          <div>
+            <span className="block text-[10px] text-slate-400 uppercase tracking-wider font-mono">
+              Grand Total
+            </span>
+            <span className="text-base sm:text-xl font-bold text-white">
+              {getFormattedPrice(totalAmount)}
+            </span>
+          </div>
+
+          <div className="flex items-center">
+            <OrderModal cart={cart} />
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
 }
